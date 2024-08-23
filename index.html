@@ -5,9 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>バウンティラッシュ 星4かけら計算機</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
-        input, select { margin-bottom: 10px; }
-        #result { margin-top: 20px; font-weight: bold; }
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f8ff;
+            color: #333;
+        }
+        h1 {
+            color: #4169e1;
+            text-align: center;
+        }
+        input, select, button {
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #4169e1;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4169e1;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1e90ff;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #4169e1;
+        }
+        #notice {
+            background-color: #e6f2ff;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -91,12 +127,13 @@
 
     <div id="result"></div>
 
-    <div id="notice" style="margin-top: 30px; font-size: 0.9em;">
+    <div id="notice">
         <h3>注意事項：</h3>
         <ul>
             <li>恒常の場合、毎日交換所で10個交換するとします。</li>
             <li>得ラッシュを購入する場合は、キャラのかけら5個＋星4かけら1個の計6個とします。</li>
             <li>チャレバトの変わる周期は1週間と仮定します。</li>
+            <li>リーグ報酬は毎月1日と16日にもらえます。</li>
         </ul>
     </div>
 
@@ -159,7 +196,7 @@
                 const leagueRewardMap = {
                     'SS': 50, 'S+': 40, 'S': 30, 'S-': 20, 'A+': 15, 'A': 10, 'A-': 5
                 };
-                extraShards += leagueRewardMap[leagueRank] * 2; // 月2回
+                extraShards += leagueRewardMap[leagueRank];
             }
 
             // チャレバト
@@ -167,7 +204,18 @@
                 dailyShards += paidChallenge === 'yes' ? 60 / 7 : 20 / 7;
             }
 
-            const totalDays = Math.ceil((targetShards - extraShards) / dailyShards);
+            let totalDays = 0;
+            let currentShards = extraShards;
+            while (currentShards < targetShards) {
+                currentShards += dailyShards;
+                totalDays++;
+
+                // リーグ報酬の追加（1日と16日）
+                if (leagueRewards === 'yes' && (totalDays % 15 === 1 || totalDays % 15 === 0)) {
+                    currentShards += leagueRewardMap[leagueRank];
+                }
+            }
+
             const targetDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
 
             document.getElementById('result').innerText = `目標達成予定日: ${targetDate.toLocaleDateString('ja-JP')}`;
