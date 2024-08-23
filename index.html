@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>バウンティラッシュ 星4かけら計算機</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        input, select { margin-bottom: 10px; }
+        #result { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>バウンティラッシュ 星4かけら計算機</h1>
+    
+    <label for="startDate">開始日：</label>
+    <input type="date" id="startDate"><br>
+
+    <label for="targetShards">目標かけら数：</label>
+    <input type="number" id="targetShards" min="1"><br>
+
+    <label for="characterType">キャラクターの種類：</label>
+    <select id="characterType">
+        <option value="ultra">超フェス</option>
+        <option value="limited">フェス限</option>
+        <option value="regular">恒常</option>
+    </select><br>
+
+    <div id="limitedOptions" style="display:none;">
+        <label for="purchaseRush">得ラッシュ30を購入しますか？</label>
+        <select id="purchaseRush">
+            <option value="no">いいえ</option>
+            <option value="yes">はい</option>
+        </select><br>
+    </div>
+
+    <label for="specialTraining">特訓をしますか？</label>
+    <select id="specialTraining">
+        <option value="no">いいえ</option>
+        <option value="yes">はい</option>
+    </select><br>
+
+    <div id="trainingOptions" style="display:none;">
+        <label for="allianceCheer">同盟エールが使えますか？</label>
+        <select id="allianceCheer">
+            <option value="no">いいえ</option>
+            <option value="yes">はい</option>
+        </select><br>
+
+        <label for="paidTraining">特訓に課金しますか？</label>
+        <select id="paidTraining">
+            <option value="no">いいえ</option>
+            <option value="yes">はい</option>
+        </select><br>
+    </div>
+
+    <label for="leagueRewards">リーグ報酬のかけらを使いますか？</label>
+    <select id="leagueRewards">
+        <option value="no">いいえ</option>
+        <option value="yes">はい</option>
+    </select><br>
+
+    <div id="leagueOptions" style="display:none;">
+        <label for="leagueRank">シーズン最終日のランク：</label>
+        <select id="leagueRank">
+            <option value="SS">SS</option>
+            <option value="S+">S+</option>
+            <option value="S">S</option>
+            <option value="S-">S-</option>
+            <option value="A+">A+</option>
+            <option value="A">A</option>
+            <option value="A-">A-</option>
+        </select><br>
+    </div>
+
+    <label for="challengeBattle">チャレバトでもらえるかけらを使いますか？</label>
+    <select id="challengeBattle">
+        <option value="no">いいえ</option>
+        <option value="yes">はい</option>
+    </select><br>
+
+    <div id="challengeOptions" style="display:none;">
+        <label for="paidChallenge">チャレバトに課金しますか？</label>
+        <select id="paidChallenge">
+            <option value="no">いいえ</option>
+            <option value="yes">はい</option>
+        </select><br>
+    </div>
+
+    <button onclick="calculateDate()">計算する</button>
+
+    <div id="result"></div>
+
+    <div id="notice" style="margin-top: 30px; font-size: 0.9em;">
+        <h3>注意事項：</h3>
+        <ul>
+            <li>恒常の場合、毎日交換所で10個交換するとします。</li>
+            <li>得ラッシュを購入する場合は、キャラのかけら5個＋星4かけら1個の計6個とします。</li>
+            <li>チャレバトの変わる周期は1週間と仮定します。</li>
+        </ul>
+    </div>
+
+    <script>
+        function showHideOptions() {
+            document.getElementById('limitedOptions').style.display = 
+                document.getElementById('characterType').value === 'limited' ? 'block' : 'none';
+            document.getElementById('trainingOptions').style.display = 
+                document.getElementById('specialTraining').value === 'yes' ? 'block' : 'none';
+            document.getElementById('leagueOptions').style.display = 
+                document.getElementById('leagueRewards').value === 'yes' ? 'block' : 'none';
+            document.getElementById('challengeOptions').style.display = 
+                document.getElementById('challengeBattle').value === 'yes' ? 'block' : 'none';
+        }
+
+        document.getElementById('characterType').addEventListener('change', showHideOptions);
+        document.getElementById('specialTraining').addEventListener('change', showHideOptions);
+        document.getElementById('leagueRewards').addEventListener('change', showHideOptions);
+        document.getElementById('challengeBattle').addEventListener('change', showHideOptions);
+
+        function calculateDate() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const targetShards = parseInt(document.getElementById('targetShards').value);
+            const characterType = document.getElementById('characterType').value;
+            const purchaseRush = document.getElementById('purchaseRush').value;
+            const specialTraining = document.getElementById('specialTraining').value;
+            const allianceCheer = document.getElementById('allianceCheer').value;
+            const paidTraining = document.getElementById('paidTraining').value;
+            const leagueRewards = document.getElementById('leagueRewards').value;
+            const leagueRank = document.getElementById('leagueRank').value;
+            const challengeBattle = document.getElementById('challengeBattle').value;
+            const paidChallenge = document.getElementById('paidChallenge').value;
+
+            let dailyShards = 0;
+            let extraShards = 0;
+
+            // キャラクターの種類による基本かけら数
+            if (characterType === 'regular') {
+                dailyShards += 10;
+            }
+
+            // 得ラッシュ30購入
+            if (characterType === 'limited' && purchaseRush === 'yes') {
+                extraShards += 6;
+            }
+
+            // 特訓
+            if (specialTraining === 'yes') {
+                const hoursPerShard = paidTraining === 'yes' ? 3.75 : 5;
+                dailyShards += 24 / hoursPerShard;
+
+                // 同盟エール
+                if (allianceCheer === 'yes') {
+                    dailyShards += 1;
+                }
+            }
+
+            // リーグ報酬
+            if (leagueRewards === 'yes') {
+                const leagueRewardMap = {
+                    'SS': 50, 'S+': 40, 'S': 30, 'S-': 20, 'A+': 15, 'A': 10, 'A-': 5
+                };
+                extraShards += leagueRewardMap[leagueRank] * 2; // 月2回
+            }
+
+            // チャレバト
+            if (challengeBattle === 'yes') {
+                dailyShards += paidChallenge === 'yes' ? 60 / 7 : 20 / 7;
+            }
+
+            const totalDays = Math.ceil((targetShards - extraShards) / dailyShards);
+            const targetDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
+
+            document.getElementById('result').innerText = `目標達成予定日: ${targetDate.toLocaleDateString('ja-JP')}`;
+        }
+
+        // 今日の日付をデフォルトで設定
+        document.getElementById('startDate').valueAsDate = new Date();
+    </script>
+</body>
+</html>
