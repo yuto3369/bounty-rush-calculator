@@ -48,6 +48,10 @@
             border-radius: 4px;
             margin-top: 20px;
         }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -137,6 +141,7 @@
             <li>恒常の場合、毎日交換所で10個交換するとします。</li>
             <li>得ラッシュを購入する場合は、キャラのかけら5個＋星4かけら1個の計6個とします。</li>
             <li>チャレバトの変わる周期は1週間と仮定します。</li>
+            <li>ログイン報酬や配布でもらえる星4かけらは含まれていないので、表示されたものより早く目標数に達成することがあります。</li>
         </ul>
     </div>
 
@@ -159,7 +164,7 @@
 
         function calculateDate() {
             const startDate = new Date(document.getElementById('startDate').value);
-            const targetShards = parseInt(document.getElementById('targetShards').value);
+            const targetShardsInput = document.getElementById('targetShards').value;
             const characterType = document.getElementById('characterType').value;
             const purchaseRush = document.getElementById('purchaseRush').value;
             const specialTraining = document.getElementById('specialTraining').value;
@@ -169,6 +174,14 @@
             const leagueRank = document.getElementById('leagueRank').value;
             const challengeBattle = document.getElementById('challengeBattle').value;
             const paidChallenge = document.getElementById('paidChallenge').value;
+
+            // 入力チェック
+            if (!/^\d+$/.test(targetShardsInput)) {
+                document.getElementById('result').innerHTML = '<span class="error">半角数字で入力してください。</span>';
+                return;
+            }
+
+            const targetShards = parseInt(targetShardsInput);
 
             let dailyShards = 0;
 
@@ -198,6 +211,12 @@
             // チャレバト
             if (challengeBattle === 'yes') {
                 dailyShards += paidChallenge === 'yes' ? 60 / 7 : 20 / 7;
+            }
+
+            // すべての選択肢が「いいえ」の場合
+            if (dailyShards === 0 && characterType !== 'regular') {
+                document.getElementById('result').innerHTML = '<span class="error">エラー: かけらを獲得する方法を選択してください。</span>';
+                return;
             }
 
             let totalDays = 0;
