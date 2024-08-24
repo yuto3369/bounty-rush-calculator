@@ -61,7 +61,7 @@
                 content: '\Aかけら計算機';
                 white-space: pre;
                 display: block;
-                margin-top: -5px;  /* タイトル間の間隔を狭める */
+                margin-top: -5px;
             }
             h1 span {
                 display: none;
@@ -199,18 +199,22 @@
             const targetShards = parseInt(targetShardsInput);
 
             let dailyShards = 0;
+            let hasShardSource = false;
 
             // キャラクターの種類による基本かけら数
             if (characterType === 'regular') {
                 dailyShards += 10;
+                hasShardSource = true;
             } else if (characterType === 'limited' && purchaseRush === 'yes') {
                 dailyShards += 6;
+                hasShardSource = true;
             }
 
             // 特訓
             if (specialTraining === 'yes') {
                 const hoursPerShard = paidTraining === 'yes' ? 3.75 : 5;
                 dailyShards += 24 / hoursPerShard;
+                hasShardSource = true;
 
                 // 同盟エール
                 if (allianceCheer === 'yes') {
@@ -218,21 +222,27 @@
                 }
             }
 
+            // チャレバト
+            if (challengeBattle === 'yes') {
+                dailyShards += paidChallenge === 'yes' ? 60 / 7 : 20 / 7;
+                hasShardSource = true;
+            }
+
+            // リーグ報酬
+            if (leagueRewards === 'yes') {
+                hasShardSource = true;
+            }
+
+            // かけらを獲得する方法が選択されていない場合
+            if (!hasShardSource && characterType !== 'regular') {
+                document.getElementById('result').innerHTML = '<span class="error">エラー: かけらを獲得する方法を選択してください。</span>';
+                return;
+            }
+
             // リーグ報酬
             const leagueRewardMap = {
                 'SS': 50, 'S+': 40, 'S': 30, 'S-': 20, 'A+': 15, 'A': 10, 'A-': 5
             };
-
-            // チャレバト
-            if (challengeBattle === 'yes') {
-                dailyShards += paidChallenge === 'yes' ? 60 / 7 : 20 / 7;
-            }
-
-            // すべての選択肢が「いいえ」の場合
-            if (dailyShards === 0 && characterType !== 'regular') {
-                document.getElementById('result').innerHTML = '<span class="error">エラー: かけらを獲得する方法を選択してください。</span>';
-                return;
-            }
 
             let totalDays = 0;
             let currentShards = 0;
