@@ -69,35 +69,35 @@
     <div id="limitedOptions" style="display:none;">
         <label for="purchaseRush">得ラッシュ30を購入しますか？</label>
         <select id="purchaseRush">
-            <option value="no">いいえ</option>
             <option value="yes">はい</option>
+            <option value="no">いいえ</option>
         </select><br>
     </div>
 
     <label for="specialTraining">特訓をしますか？</label>
     <select id="specialTraining">
-        <option value="no">いいえ</option>
         <option value="yes">はい</option>
+        <option value="no">いいえ</option>
     </select><br>
 
     <div id="trainingOptions" style="display:none;">
         <label for="allianceCheer">同盟エールが使えますか？</label>
         <select id="allianceCheer">
-            <option value="no">いいえ</option>
             <option value="yes">はい</option>
+            <option value="no">いいえ</option>
         </select><br>
 
         <label for="paidTraining">特訓に課金しますか？</label>
         <select id="paidTraining">
-            <option value="no">いいえ</option>
             <option value="yes">はい</option>
+            <option value="no">いいえ</option>
         </select><br>
     </div>
 
     <label for="leagueRewards">リーグ報酬のかけらを使いますか？</label>
     <select id="leagueRewards">
-        <option value="no">いいえ</option>
         <option value="yes">はい</option>
+        <option value="no">いいえ</option>
     </select><br>
 
     <div id="leagueOptions" style="display:none;">
@@ -115,15 +115,15 @@
 
     <label for="challengeBattle">チャレバトでもらえるかけらを使いますか？</label>
     <select id="challengeBattle">
-        <option value="no">いいえ</option>
         <option value="yes">はい</option>
+        <option value="no">いいえ</option>
     </select><br>
 
     <div id="challengeOptions" style="display:none;">
         <label for="paidChallenge">チャレバトに課金しますか？</label>
         <select id="paidChallenge">
-            <option value="no">いいえ</option>
             <option value="yes">はい</option>
+            <option value="no">いいえ</option>
         </select><br>
     </div>
 
@@ -211,8 +211,11 @@
                 totalDays++;
 
                 // リーグ報酬の追加（1日と16日）
-                if (leagueRewards === 'yes' && (totalDays % 15 === 1 || totalDays % 15 === 0)) {
-                    currentShards += leagueRewardMap[leagueRank];
+                if (leagueRewards === 'yes') {
+                    const currentDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
+                    if (currentDate.getDate() === 1 || currentDate.getDate() === 16) {
+                        currentShards += leagueRewardMap[leagueRank];
+                    }
                 }
             }
 
@@ -223,6 +226,8 @@
 
         // 今日の日付をデフォルトで設定
         document.getElementById('startDate').valueAsDate = new Date();
+        // 初期表示時にオプションを表示
+        showHideOptions();
     </script>
 </body>
 </html>
