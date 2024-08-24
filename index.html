@@ -37,6 +37,10 @@
             font-weight: bold;
             text-align: center;
             color: #4169e1;
+            font-size: 1.2em;
+            background-color: #e6f2ff;
+            padding: 15px;
+            border-radius: 4px;
         }
         #notice {
             background-color: #e6f2ff;
@@ -133,7 +137,6 @@
             <li>恒常の場合、毎日交換所で10個交換するとします。</li>
             <li>得ラッシュを購入する場合は、キャラのかけら5個＋星4かけら1個の計6個とします。</li>
             <li>チャレバトの変わる周期は1週間と仮定します。</li>
-            <li>リーグ報酬は毎月1日と16日にもらえます。</li>
         </ul>
     </div>
 
@@ -192,12 +195,9 @@
             }
 
             // リーグ報酬
-            if (leagueRewards === 'yes') {
-                const leagueRewardMap = {
-                    'SS': 50, 'S+': 40, 'S': 30, 'S-': 20, 'A+': 15, 'A': 10, 'A-': 5
-                };
-                extraShards += leagueRewardMap[leagueRank];
-            }
+            const leagueRewardMap = {
+                'SS': 50, 'S+': 40, 'S': 30, 'S-': 20, 'A+': 15, 'A': 10, 'A-': 5
+            };
 
             // チャレバト
             if (challengeBattle === 'yes') {
