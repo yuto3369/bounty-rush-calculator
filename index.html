@@ -52,10 +52,23 @@
             color: red;
             font-weight: bold;
         }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            h1:after {
+                content: '\A かけら計算機';
+                white-space: pre;
+                display: block;
+            }
+            h1 span {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>バウンティラッシュかけら計算機</h1>
+    <h1>バウンティラッシュ<span>かけら計算機</span></h1>
     
     <label for="startDate">開始日：</label>
     <input type="date" id="startDate"><br>
