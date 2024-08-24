@@ -171,16 +171,12 @@
             const paidChallenge = document.getElementById('paidChallenge').value;
 
             let dailyShards = 0;
-            let extraShards = 0;
 
             // キャラクターの種類による基本かけら数
             if (characterType === 'regular') {
                 dailyShards += 10;
-            }
-
-            // 得ラッシュ30購入
-            if (characterType === 'limited' && purchaseRush === 'yes') {
-                extraShards += 6;
+            } else if (characterType === 'limited' && purchaseRush === 'yes') {
+                dailyShards += 6;
             }
 
             // 特訓
@@ -205,7 +201,7 @@
             }
 
             let totalDays = 0;
-            let currentShards = extraShards;
+            let currentShards = 0;
             while (currentShards < targetShards) {
                 currentShards += dailyShards;
                 totalDays++;
