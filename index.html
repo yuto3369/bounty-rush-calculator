@@ -55,11 +55,13 @@
         @media (max-width: 600px) {
             h1 {
                 font-size: 1.5em;
+                line-height: 1.2;
             }
             h1:after {
-                content: '\A かけら計算機';
+                content: '\Aかけら計算機';
                 white-space: pre;
                 display: block;
+                margin-top: -5px;  /* タイトル間の間隔を狭める */
             }
             h1 span {
                 display: none;
