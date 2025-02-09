@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="バウンティラッシュのかけら計算ツールで、目標達成日や必要なかけら数を計算できます。あなたのゲーム進行を手助け！">
+    <meta name="keywords" content="バウンティラッシュ, かけら計算, ゲーム, 計算ツール">
+    <meta name="author" content="ユーザー名">
+    <meta property="og:title" content="バウンティラッシュかけら計算ツール">
+    <meta property="og:description" content="バウンティラッシュのかけら計算ツールで、目標達成日や必要なかけら数を計算できます。">
+    <meta property="og:image" content="サムネイル画像のURL">
+    <meta property="og:url" content="ページのURL">
     <title>バウンティラッシュかけら計算</title>
     <style>
         body {
@@ -42,21 +49,36 @@
             padding: 15px;
             border-radius: 4px;
         }
-        #notice {
-            background-color: #e6f2ff;
-            padding: 10px;
-            border-radius: 4px;
+        #history {
             margin-top: 20px;
+            padding: 10px;
+            background-color: #e6f2ff;
+            border-radius: 4px;
+        }
+        .history-item {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .history-item button {
+            background-color: #ff6347;
+            color: white;
+            cursor: pointer;
+            padding: 5px;
+            border: none;
+            border-radius: 4px;
+        }
+        .history-item button:hover {
+            background-color: #ff4500;
         }
         .error {
             color: red;
             font-weight: bold;
         }
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
-                line-height: 1.2;
-            }
+        #historyList {
+            display: none;
         }
     </style>
 </head>
@@ -141,24 +163,14 @@
 
     <div id="result"></div>
 
-    <div id="notice">
-        <h3>注意事項：</h3>
-        <ul>
-            <li>恒常の場合、毎日交換所で10個交換するとします。</li>
-            <li>得ラッシュを購入する場合は、キャラのかけら5個＋星4かけら1個の計6個とします。</li>
-            <li>チャレバトの変わる周期は1週間と仮定します。</li>
-            <li>ログイン報酬や配布でもらえるかけらは含まれていないので、表示されたものより早く目標数に達成することがあります。</li>
-        </ul>
-    </div>
+    <button onclick="toggleHistory()">履歴の表示/非表示</button>
 
-    <h2>履歴</h2>
     <div id="history">
-        <p>履歴はここに表示されます</p>
+        <h3>計算履歴</h3>
+        <div id="historyList"></div>
     </div>
 
     <script>
-        let history = [];
-
         function showHideOptions() {
             document.getElementById('limitedOptions').style.display = 
                 document.getElementById('characterType').value === 'limited' ? 'block' : 'none';
@@ -233,62 +245,35 @@
 
             // かけらを獲得する方法が選択されていない場合
             if (!hasShardSource && characterType !== 'regular') {
-                document.getElementById('result').innerHTML = '<span class="error">エラー: かけらを獲得する方法を選択してください。</span>';
+                document.getElementById('result').innerHTML = '<span class="error">エラー: かけらを獲得する方法が選択されていません。</span>';
                 return;
             }
 
-            // リーグ報酬
-            const leagueRewardMap = {
-                'SS': 50, 'S+': 40, 'S': 30, 'S-': 20, 'A+': 15, 'A': 10, 'A-': 5
-            };
+            // 目標達成日を計算
+            const shardsRequired = targetShards - dailyShards;
+            const daysRemaining = Math.ceil(shardsRequired / dailyShards);
+            const targetDate = new Date(startDate);
+            targetDate.setDate(targetDate.getDate() + daysRemaining);
 
-            let totalDays = 0;
-            let currentShards = 0;
-            while (currentShards < targetShards) {
-                currentShards += dailyShards;
-                totalDays++;
+            document.getElementById('result').innerHTML = '目標達成予定日: ' + targetDate.toLocaleDateString();
 
-                // リーグ報酬の追加（1日と16日）
-                if (leagueRewards === 'yes') {
-                    const currentDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
-                    if (currentDate.getDate() === 1 || currentDate.getDate() === 16) {
-                        currentShards += leagueRewardMap[leagueRank];
-                    }
-                }
-            }
-
-            const targetDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
-
-            document.getElementById('result').innerText = `目標達成予定日: ${targetDate.toLocaleDateString('ja-JP')}`;
-            
-            // 履歴に追加
-            const name = prompt('キャラクター名を入力してください:');
-            history.push({ name, date: targetDate.toLocaleDateString('ja-JP') });
-            updateHistory();
+            // 履歴を更新
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.innerHTML = `目標: ${targetShards} かけら, 開始日: ${startDate.toLocaleDateString()}, 計算結果: ${targetDate.toLocaleDateString()} <button onclick="removeHistory(this)">削除</button>`;
+            document.getElementById('historyList').appendChild(historyItem);
         }
 
-        function updateHistory() {
-            const historyDiv = document.getElementById('history');
-            historyDiv.innerHTML = history.map(item => {
-                return `<div>
-                    <strong>${item.name}</strong> : ${item.date} 
-                    <button onclick="renameHistory(${history.indexOf(item)})">名前を変更</button>
-                </div>`;
-            }).join('');
+        function removeHistory(button) {
+            button.parentElement.remove();
         }
 
-        function renameHistory(index) {
-            const newName = prompt('新しいキャラクター名を入力してください:');
-            if (newName) {
-                history[index].name = newName;
-                updateHistory();
-            }
+        function toggleHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.style.display = historyList.style.display === 'none' ? 'block' : 'none';
         }
 
-        // 今日の日付をデフォルトで設定
-        document.getElementById('startDate').valueAsDate = new Date();
-        // 初期表示時にオプションを表示
-        showHideOptions();
+        showHideOptions();  // 初期設定で表示を調整
     </script>
 </body>
 </html>
