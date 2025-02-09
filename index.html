@@ -13,12 +13,17 @@
       background-color: #f0f8ff;
       color: #333;
     }
-    h1, h3 {
-      color: #4169e1;
-      text-align: center;
+    /* 各フォーム項目をコンテナでグループ化 */
+    .form-group {
+      margin-bottom: 15px;
     }
+    /* ラベルをブロック表示にして余白を追加 */
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    /* 入力欄・セレクト・ボタンは横幅100%で表示 */
     input, select, button {
-      margin-bottom: 10px;
       width: 100%;
       padding: 8px;
       border: 1px solid #4169e1;
@@ -87,59 +92,73 @@
 </head>
 <body>
   <h1>バウンティラッシュかけら計算</h1>
-  
-  <!-- キャラクター名の任意入力（未入力の場合は履歴に名前を表示しない） -->
-  <label for="characterName">キャラクター名 (任意)：</label>
-  <input type="text" id="characterName" placeholder=""><br>
-  
-  <label for="startDate">開始日：</label>
-  <input type="date" id="startDate"><br>
 
-  <label for="targetShards">目標かけら数：</label>
-  <input type="number" id="targetShards" min="1"><br>
+  <div class="form-group">
+    <label for="characterName">キャラクター名 (任意)：</label>
+    <input type="text" id="characterName" placeholder="">
+  </div>
 
-  <label for="characterType">キャラクターの種類：</label>
-  <select id="characterType">
-    <option value="ultra">超フェス</option>
-    <option value="limited">フェス限</option>
-    <option value="regular">恒常</option>
-  </select><br>
+  <div class="form-group">
+    <label for="startDate">開始日：</label>
+    <input type="date" id="startDate">
+  </div>
 
-  <div id="limitedOptions" style="display:none;">
+  <div class="form-group">
+    <label for="targetShards">目標かけら数：</label>
+    <input type="number" id="targetShards" min="1">
+  </div>
+
+  <div class="form-group">
+    <label for="characterType">キャラクターの種類：</label>
+    <select id="characterType">
+      <option value="ultra">超フェス</option>
+      <option value="limited">フェス限</option>
+      <option value="regular">恒常</option>
+    </select>
+  </div>
+
+  <div class="form-group" id="limitedOptions" style="display:none;">
     <label for="purchaseRush">得ラッシュ30を購入しますか？</label>
     <select id="purchaseRush">
       <option value="yes">はい</option>
       <option value="no">いいえ</option>
-    </select><br>
+    </select>
   </div>
 
-  <label for="specialTraining">特訓をしますか？</label>
-  <select id="specialTraining">
-    <option value="yes">はい</option>
-    <option value="no">いいえ</option>
-  </select><br>
+  <div class="form-group">
+    <label for="specialTraining">特訓をしますか？</label>
+    <select id="specialTraining">
+      <option value="yes">はい</option>
+      <option value="no">いいえ</option>
+    </select>
+  </div>
 
-  <div id="trainingOptions" style="display:none;">
+  <!-- 特訓関連のオプションは2つに分けています -->
+  <div class="form-group" id="trainingOptions" style="display:none;">
     <label for="allianceCheer">同盟エールが使えますか？</label>
     <select id="allianceCheer">
       <option value="yes">はい</option>
       <option value="no">いいえ</option>
-    </select><br>
+    </select>
+  </div>
 
+  <div class="form-group" id="trainingPaid" style="display:none;">
     <label for="paidTraining">特訓に課金しますか？</label>
     <select id="paidTraining">
       <option value="yes">はい</option>
       <option value="no">いいえ</option>
-    </select><br>
+    </select>
   </div>
 
-  <label for="leagueRewards">リーグ報酬のかけらを使いますか？</label>
-  <select id="leagueRewards">
-    <option value="yes">はい</option>
-    <option value="no">いいえ</option>
-  </select><br>
+  <div class="form-group">
+    <label for="leagueRewards">リーグ報酬のかけらを使いますか？</label>
+    <select id="leagueRewards">
+      <option value="yes">はい</option>
+      <option value="no">いいえ</option>
+    </select>
+  </div>
 
-  <div id="leagueOptions" style="display:none;">
+  <div class="form-group" id="leagueOptions" style="display:none;">
     <label for="leagueRank">シーズン最終日のランク：</label>
     <select id="leagueRank">
       <option value="SS">SS</option>
@@ -149,24 +168,28 @@
       <option value="A+">A+</option>
       <option value="A">A</option>
       <option value="A-">A-</option>
-    </select><br>
+    </select>
   </div>
 
-  <label for="challengeBattle">チャレバトでもらえるかけらを使いますか？</label>
-  <select id="challengeBattle">
-    <option value="yes">はい</option>
-    <option value="no">いいえ</option>
-  </select><br>
+  <div class="form-group">
+    <label for="challengeBattle">チャレバトでもらえるかけらを使いますか？</label>
+    <select id="challengeBattle">
+      <option value="yes">はい</option>
+      <option value="no">いいえ</option>
+    </select>
+  </div>
 
-  <div id="challengeOptions" style="display:none;">
+  <div class="form-group" id="challengeOptions" style="display:none;">
     <label for="paidChallenge">チャレバトに課金しますか？</label>
     <select id="paidChallenge">
       <option value="yes">はい</option>
       <option value="no">いいえ</option>
-    </select><br>
+    </select>
   </div>
 
-  <button onclick="calculateDate()">計算する</button>
+  <div class="form-group">
+    <button onclick="calculateDate()">計算する</button>
+  </div>
 
   <div id="result"></div>
 
@@ -180,7 +203,6 @@
     </ul>
   </div>
 
-  <!-- 計算履歴表示領域 -->
   <div id="historyContainer">
     <h3>計算履歴</h3>
     <ul id="historyList"></ul>
@@ -191,8 +213,13 @@
     function showHideOptions() {
       document.getElementById('limitedOptions').style.display =
         document.getElementById('characterType').value === 'limited' ? 'block' : 'none';
-      document.getElementById('trainingOptions').style.display =
-        document.getElementById('specialTraining').value === 'yes' ? 'block' : 'none';
+      if (document.getElementById('specialTraining').value === 'yes') {
+        document.getElementById('trainingOptions').style.display = 'block';
+        document.getElementById('trainingPaid').style.display = 'block';
+      } else {
+        document.getElementById('trainingOptions').style.display = 'none';
+        document.getElementById('trainingPaid').style.display = 'none';
+      }
       document.getElementById('leagueOptions').style.display =
         document.getElementById('leagueRewards').value === 'yes' ? 'block' : 'none';
       document.getElementById('challengeOptions').style.display =
@@ -203,21 +230,17 @@
     document.getElementById('leagueRewards').addEventListener('change', showHideOptions);
     document.getElementById('challengeBattle').addEventListener('change', showHideOptions);
 
-    // 履歴をローカルストレージから読み込み、画面に表示する関数
+    // 履歴表示処理
     function updateHistoryUI() {
       const historyList = document.getElementById('historyList');
-      historyList.innerHTML = ''; // 一旦クリア
+      historyList.innerHTML = '';
       const history = JSON.parse(localStorage.getItem('calculationHistory')) || [];
-      // 最新の計算が上に来るように、配列の末尾からループ
       for (let i = history.length - 1; i >= 0; i--) {
         const entry = history[i];
         const li = document.createElement('li');
         li.setAttribute('data-index', i);
-        // キャラクター名がある場合のみ表示
         const nameDisplay = entry.characterName ? `<strong>${entry.characterName}</strong>：` : '';
         li.innerHTML = `${nameDisplay}目標達成予定日 <em>${entry.targetDate}</em> （計算日時：${new Date(entry.calculatedDate).toLocaleString('ja-JP')}）`;
-        
-        // 削除ボタン（小さな正方形の赤いごみ箱アイコン）
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.title = 'この履歴を削除';
@@ -230,7 +253,7 @@
       }
     }
 
-    // 履歴の1項目を削除する関数
+    // 履歴の項目削除
     function deleteHistoryItem(index) {
       let history = JSON.parse(localStorage.getItem('calculationHistory')) || [];
       history.splice(index, 1);
@@ -257,7 +280,6 @@
       const challengeBattle = document.getElementById('challengeBattle').value;
       const paidChallenge = document.getElementById('paidChallenge').value;
 
-      // 入力チェック：目標かけら数が半角数字かどうか
       if (!/^\d+$/.test(targetShardsInput)) {
         document.getElementById('result').innerHTML = '<span class="error">半角数字で目標かけら数を入力してください。</span>';
         return;
@@ -267,7 +289,6 @@
       let dailyShards = 0;
       let hasShardSource = false;
 
-      // キャラクターの種類による基本かけら数
       if (characterType === 'regular') {
         dailyShards += 10;
         hasShardSource = true;
@@ -276,31 +297,25 @@
         hasShardSource = true;
       }
 
-      // 特訓
       if (specialTraining === 'yes') {
         const hoursPerShard = paidTraining === 'yes' ? 3.75 : 5;
         dailyShards += 24 / hoursPerShard;
         hasShardSource = true;
-
-        // 同盟エール
         if (allianceCheer === 'yes') {
           dailyShards += 1;
         }
       }
 
-      // チャレバト
       if (challengeBattle === 'yes') {
         dailyShards += paidChallenge === 'yes' ? 60 / 7 : 20 / 7;
         hasShardSource = true;
       }
 
-      // かけらを獲得する方法が選択されていない場合
       if (!hasShardSource && characterType !== 'regular') {
         document.getElementById('result').innerHTML = '<span class="error">エラー: かけらを獲得する方法を選択してください。</span>';
         return;
       }
 
-      // リーグ報酬のマッピング
       const leagueRewardMap = {
         'SS': 50, 'S+': 40, 'S': 30, 'S-': 20, 'A+': 15, 'A': 10, 'A-': 5
       };
@@ -310,8 +325,7 @@
       while (currentShards < targetShards) {
         currentShards += dailyShards;
         totalDays++;
-
-        // リーグ報酬の追加（1日と16日）
+        // リーグ報酬は1日と16日に加算
         if (leagueRewards === 'yes') {
           const currentDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
           if (currentDate.getDate() === 1 || currentDate.getDate() === 16) {
@@ -320,14 +334,9 @@
         }
       }
       const targetDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
-
-      // 結果表示
       document.getElementById('result').innerText = `目標達成予定日: ${targetDate.toLocaleDateString('ja-JP')}`;
 
-      // キャラクター名（未入力の場合は空文字のまま）
       const characterName = document.getElementById('characterName').value.trim();
-
-      // 履歴の更新：計算日時、キャラクター名、目標達成予定日を記録
       const entry = {
         characterName: characterName,
         calculatedDate: new Date().toISOString(),
@@ -339,9 +348,8 @@
       updateHistoryUI();
     }
 
-    // 今日の日付をデフォルトで設定
+    // 初期設定
     document.getElementById('startDate').valueAsDate = new Date();
-    // 初期表示時にオプションを表示＆履歴を読み込み
     showHideOptions();
     updateHistoryUI();
   </script>
