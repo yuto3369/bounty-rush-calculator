@@ -2,7 +2,8 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ユーザー拡大を無効にする（※アクセシビリティに配慮が必要です） -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>バウンティラッシュかけら計算</title>
   <style>
     body {
@@ -13,7 +14,7 @@
       background-color: #f0f8ff;
       color: #333;
     }
-    /* スマホでの自動ズームを防ぐため、入力系のフォントサイズを16px以上に指定 */
+    /* 入力フィールドやボタンのフォントサイズを16px以上に指定 */
     input, select, textarea, button {
       font-size: 16px;
     }
