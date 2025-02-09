@@ -60,6 +60,22 @@
     li {
       padding: 5px;
       border-bottom: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .delete-btn {
+      background-color: red;
+      color: white;
+      border: none;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 24px;
+      text-align: center;
+      padding: 0;
+      border-radius: 3px;
     }
     @media (max-width: 600px) {
       h1 {
@@ -72,9 +88,9 @@
 <body>
   <h1>バウンティラッシュかけら計算</h1>
   
-  <!-- 任意入力：キャラクター名 -->
+  <!-- キャラクター名の任意入力（未入力の場合は履歴に名前を表示しない） -->
   <label for="characterName">キャラクター名 (任意)：</label>
-  <input type="text" id="characterName" placeholder="例：レジェンドA"><br>
+  <input type="text" id="characterName" placeholder="例：レジェンドAを入力しない"><br>
   
   <label for="startDate">開始日：</label>
   <input type="date" id="startDate"><br>
@@ -173,14 +189,14 @@
   <script>
     // オプションの表示／非表示
     function showHideOptions() {
-      document.getElementById('limitedOptions').style.display = 
-          document.getElementById('characterType').value === 'limited' ? 'block' : 'none';
-      document.getElementById('trainingOptions').style.display = 
-          document.getElementById('specialTraining').value === 'yes' ? 'block' : 'none';
-      document.getElementById('leagueOptions').style.display = 
-          document.getElementById('leagueRewards').value === 'yes' ? 'block' : 'none';
-      document.getElementById('challengeOptions').style.display = 
-          document.getElementById('challengeBattle').value === 'yes' ? 'block' : 'none';
+      document.getElementById('limitedOptions').style.display =
+        document.getElementById('characterType').value === 'limited' ? 'block' : 'none';
+      document.getElementById('trainingOptions').style.display =
+        document.getElementById('specialTraining').value === 'yes' ? 'block' : 'none';
+      document.getElementById('leagueOptions').style.display =
+        document.getElementById('leagueRewards').value === 'yes' ? 'block' : 'none';
+      document.getElementById('challengeOptions').style.display =
+        document.getElementById('challengeBattle').value === 'yes' ? 'block' : 'none';
     }
     document.getElementById('characterType').addEventListener('change', showHideOptions);
     document.getElementById('specialTraining').addEventListener('change', showHideOptions);
@@ -192,12 +208,34 @@
       const historyList = document.getElementById('historyList');
       historyList.innerHTML = ''; // 一旦クリア
       const history = JSON.parse(localStorage.getItem('calculationHistory')) || [];
-      // 最新の計算が上に来るように逆順で表示
-      history.slice().reverse().forEach(entry => {
+      // 最新の計算が上に来るように、配列の末尾からループ
+      for (let i = history.length - 1; i >= 0; i--) {
+        const entry = history[i];
         const li = document.createElement('li');
-        li.innerHTML = `<strong>${entry.characterName}</strong>：目標達成予定日 <em>${entry.targetDate}</em> （計算日時：${new Date(entry.calculatedDate).toLocaleString('ja-JP')}）`;
+        li.setAttribute('data-index', i);
+        // キャラクター名がある場合のみ表示
+        const nameDisplay = entry.characterName ? `<strong>${entry.characterName}</strong>：` : '';
+        li.innerHTML = `${nameDisplay}目標達成予定日 <em>${entry.targetDate}</em> （計算日時：${new Date(entry.calculatedDate).toLocaleString('ja-JP')}）`;
+        
+        // 削除ボタン（小さな正方形の赤いごみ箱アイコン）
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.title = 'この履歴を削除';
+        deleteBtn.innerText = '🗑️';
+        deleteBtn.onclick = function() {
+          deleteHistoryItem(i);
+        };
+        li.appendChild(deleteBtn);
         historyList.appendChild(li);
-      });
+      }
+    }
+
+    // 履歴の1項目を削除する関数
+    function deleteHistoryItem(index) {
+      let history = JSON.parse(localStorage.getItem('calculationHistory')) || [];
+      history.splice(index, 1);
+      localStorage.setItem('calculationHistory', JSON.stringify(history));
+      updateHistoryUI();
     }
 
     // 計算処理
@@ -218,7 +256,7 @@
       const leagueRank = document.getElementById('leagueRank').value;
       const challengeBattle = document.getElementById('challengeBattle').value;
       const paidChallenge = document.getElementById('paidChallenge').value;
-      
+
       // 入力チェック：目標かけら数が半角数字かどうか
       if (!/^\d+$/.test(targetShardsInput)) {
         document.getElementById('result').innerHTML = '<span class="error">半角数字で目標かけら数を入力してください。</span>';
@@ -286,9 +324,8 @@
       // 結果表示
       document.getElementById('result').innerText = `目標達成予定日: ${targetDate.toLocaleDateString('ja-JP')}`;
 
-      // 任意入力のキャラクター名（空の場合は「未設定」と表示）
-      const characterNameInput = document.getElementById('characterName').value.trim();
-      const characterName = characterNameInput ? characterNameInput : '未設定';
+      // キャラクター名（未入力の場合は空文字のまま）
+      const characterName = document.getElementById('characterName').value.trim();
 
       // 履歴の更新：計算日時、キャラクター名、目標達成予定日を記録
       const entry = {
