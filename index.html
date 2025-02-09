@@ -151,7 +151,14 @@
         </ul>
     </div>
 
+    <h2>履歴</h2>
+    <div id="history">
+        <p>履歴はここに表示されます</p>
+    </div>
+
     <script>
+        let history = [];
+
         function showHideOptions() {
             document.getElementById('limitedOptions').style.display = 
                 document.getElementById('characterType').value === 'limited' ? 'block' : 'none';
@@ -253,6 +260,29 @@
             const targetDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
 
             document.getElementById('result').innerText = `目標達成予定日: ${targetDate.toLocaleDateString('ja-JP')}`;
+            
+            // 履歴に追加
+            const name = prompt('キャラクター名を入力してください:');
+            history.push({ name, date: targetDate.toLocaleDateString('ja-JP') });
+            updateHistory();
+        }
+
+        function updateHistory() {
+            const historyDiv = document.getElementById('history');
+            historyDiv.innerHTML = history.map(item => {
+                return `<div>
+                    <strong>${item.name}</strong> : ${item.date} 
+                    <button onclick="renameHistory(${history.indexOf(item)})">名前を変更</button>
+                </div>`;
+            }).join('');
+        }
+
+        function renameHistory(index) {
+            const newName = prompt('新しいキャラクター名を入力してください:');
+            if (newName) {
+                history[index].name = newName;
+                updateHistory();
+            }
         }
 
         // 今日の日付をデフォルトで設定
