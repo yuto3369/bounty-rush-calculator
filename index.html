@@ -80,13 +80,27 @@
         #historyList {
             display: none;
         }
+        .note {
+            font-size: 0.9em;
+            color: #555;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 4px solid #4169e1;
+        }
     </style>
 </head>
 <body>
     <h1>バウンティラッシュかけら計算</h1>
     
+    <div class="note">
+        <p>※ 計算に必要な情報を入力してください。目標かけら数や開始日、キャラクターの種類に応じて、目標達成日が計算されます。</p>
+    </div>
+
+    <label for="characterName">キャラクター名（任意）：</label>
+    <input type="text" id="characterName" placeholder="キャラクター名を入力"><br>
+
     <label for="startDate">開始日：</label>
-    <input type="date" id="startDate"><br>
+    <input type="date" id="startDate" value=""><br>
 
     <label for="targetShards">目標かけら数：</label>
     <input type="number" id="targetShards" min="1"><br>
@@ -171,6 +185,10 @@
     </div>
 
     <script>
+        // 今日の日付をデフォルト値として設定
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').value = today;
+
         function showHideOptions() {
             document.getElementById('limitedOptions').style.display = 
                 document.getElementById('characterType').value === 'limited' ? 'block' : 'none';
@@ -188,6 +206,7 @@
         document.getElementById('challengeBattle').addEventListener('change', showHideOptions);
 
         function calculateDate() {
+            const characterName = document.getElementById('characterName').value;
             const startDate = new Date(document.getElementById('startDate').value);
             const targetShardsInput = document.getElementById('targetShards').value;
             const characterType = document.getElementById('characterType').value;
@@ -215,65 +234,4 @@
             if (characterType === 'regular') {
                 dailyShards += 10;
                 hasShardSource = true;
-            } else if (characterType === 'limited' && purchaseRush === 'yes') {
-                dailyShards += 6;
-                hasShardSource = true;
-            }
-
-            // 特訓
-            if (specialTraining === 'yes') {
-                const hoursPerShard = paidTraining === 'yes' ? 3.75 : 5;
-                dailyShards += 24 / hoursPerShard;
-                hasShardSource = true;
-
-                // 同盟エール
-                if (allianceCheer === 'yes') {
-                    dailyShards += 1;
-                }
-            }
-
-            // チャレバト
-            if (challengeBattle === 'yes') {
-                dailyShards += paidChallenge === 'yes' ? 60 / 7 : 20 / 7;
-                hasShardSource = true;
-            }
-
-            // リーグ報酬
-            if (leagueRewards === 'yes') {
-                hasShardSource = true;
-            }
-
-            // かけらを獲得する方法が選択されていない場合
-            if (!hasShardSource && characterType !== 'regular') {
-                document.getElementById('result').innerHTML = '<span class="error">エラー: かけらを獲得する方法が選択されていません。</span>';
-                return;
-            }
-
-            // 目標達成日を計算
-            const shardsRequired = targetShards - dailyShards;
-            const daysRemaining = Math.ceil(shardsRequired / dailyShards);
-            const targetDate = new Date(startDate);
-            targetDate.setDate(targetDate.getDate() + daysRemaining);
-
-            document.getElementById('result').innerHTML = '目標達成予定日: ' + targetDate.toLocaleDateString();
-
-            // 履歴を更新
-            const historyItem = document.createElement('div');
-            historyItem.className = 'history-item';
-            historyItem.innerHTML = `目標: ${targetShards} かけら, 開始日: ${startDate.toLocaleDateString()}, 計算結果: ${targetDate.toLocaleDateString()} <button onclick="removeHistory(this)">削除</button>`;
-            document.getElementById('historyList').appendChild(historyItem);
-        }
-
-        function removeHistory(button) {
-            button.parentElement.remove();
-        }
-
-        function toggleHistory() {
-            const historyList = document.getElementById('historyList');
-            historyList.style.display = historyList.style.display === 'none' ? 'block' : 'none';
-        }
-
-        showHideOptions();  // 初期設定で表示を調整
-    </script>
-</body>
-</html>
+            } else if (characterType === '
