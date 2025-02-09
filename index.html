@@ -13,6 +13,10 @@
       background-color: #f0f8ff;
       color: #333;
     }
+    /* スマホでの自動ズームを防ぐため、入力系のフォントサイズを16px以上に指定 */
+    input, select, textarea, button {
+      font-size: 16px;
+    }
     .form-group {
       margin-bottom: 15px;
     }
@@ -268,7 +272,7 @@
       updateHistoryUI();
     }
 
-    // 計算処理（以下、2つ目のコードと全く同じ計算ロジック）
+    // 計算処理（2つ目のコードと同じ計算ロジック）
     function calculateDate() {
       const startDate = new Date(document.getElementById('startDate').value);
       const targetShardsInput = document.getElementById('targetShards').value;
@@ -317,7 +321,7 @@
         hasShardSource = true;
       }
 
-      // ※2つ目のコードでは、リーグ報酬が「はい」の場合にもかけら獲得手段としてカウントする
+      // リーグ報酬が「はい」の場合にもかけら獲得手段としてカウント
       if (leagueRewards === 'yes') {
         hasShardSource = true;
       }
@@ -348,7 +352,7 @@
       const targetDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
       document.getElementById('result').innerText = `目標達成予定日: ${targetDate.toLocaleDateString('ja-JP')}`;
 
-      // 履歴への保存（元のコードの機能を残す）
+      // 履歴への保存
       const characterName = document.getElementById('characterName').value.trim();
       const entry = {
         characterName: characterName,
