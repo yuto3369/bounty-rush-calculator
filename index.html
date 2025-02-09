@@ -13,16 +13,13 @@
       background-color: #f0f8ff;
       color: #333;
     }
-    /* 各フォーム項目をコンテナでグループ化 */
     .form-group {
       margin-bottom: 15px;
     }
-    /* ラベルをブロック表示にして余白を追加 */
     label {
       display: block;
       margin-bottom: 5px;
     }
-    /* 入力欄・セレクト・ボタンは横幅100%で表示 */
     input, select, button {
       width: 100%;
       padding: 8px;
@@ -48,7 +45,7 @@
       padding: 15px;
       border-radius: 4px;
     }
-    #notice, #historyContainer {
+    #notice {
       background-color: #e6f2ff;
       padding: 10px;
       border-radius: 4px;
@@ -91,120 +88,130 @@
   </style>
 </head>
 <body>
-  <h1>バウンティラッシュかけら計算</h1>
+  <!-- 計算フォーム画面 -->
+  <div id="calculatorScreen">
+    <h1>バウンティラッシュかけら計算</h1>
 
-  <div class="form-group">
-    <label for="characterName">キャラクター名 (任意)：</label>
-    <input type="text" id="characterName" placeholder="">
+    <div class="form-group">
+      <label for="characterName">キャラクター名 (任意)：</label>
+      <input type="text" id="characterName" placeholder="">
+    </div>
+
+    <div class="form-group">
+      <label for="startDate">開始日：</label>
+      <input type="date" id="startDate">
+    </div>
+
+    <div class="form-group">
+      <label for="targetShards">目標かけら数：</label>
+      <input type="number" id="targetShards" min="1">
+    </div>
+
+    <div class="form-group">
+      <label for="characterType">キャラクターの種類：</label>
+      <select id="characterType">
+        <option value="ultra">超フェス</option>
+        <option value="limited">フェス限</option>
+        <option value="regular">恒常</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="limitedOptions" style="display:none;">
+      <label for="purchaseRush">得ラッシュ30を購入しますか？</label>
+      <select id="purchaseRush">
+        <option value="yes">はい</option>
+        <option value="no">いいえ</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="specialTraining">特訓をしますか？</label>
+      <select id="specialTraining">
+        <option value="yes">はい</option>
+        <option value="no">いいえ</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="trainingOptions" style="display:none;">
+      <label for="allianceCheer">同盟エールが使えますか？</label>
+      <select id="allianceCheer">
+        <option value="yes">はい</option>
+        <option value="no">いいえ</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="trainingPaid" style="display:none;">
+      <label for="paidTraining">特訓に課金しますか？</label>
+      <select id="paidTraining">
+        <option value="yes">はい</option>
+        <option value="no">いいえ</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="leagueRewards">リーグ報酬のかけらを使いますか？</label>
+      <select id="leagueRewards">
+        <option value="yes">はい</option>
+        <option value="no">いいえ</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="leagueOptions" style="display:none;">
+      <label for="leagueRank">シーズン最終日のランク：</label>
+      <select id="leagueRank">
+        <option value="SS">SS</option>
+        <option value="S+">S+</option>
+        <option value="S">S</option>
+        <option value="S-">S-</option>
+        <option value="A+">A+</option>
+        <option value="A">A</option>
+        <option value="A-">A-</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="challengeBattle">チャレバトでもらえるかけらを使いますか？</label>
+      <select id="challengeBattle">
+        <option value="yes">はい</option>
+        <option value="no">いいえ</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="challengeOptions" style="display:none;">
+      <label for="paidChallenge">チャレバトに課金しますか？</label>
+      <select id="paidChallenge">
+        <option value="yes">はい</option>
+        <option value="no">いいえ</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <button onclick="calculateDate()">計算する</button>
+    </div>
+
+    <div id="result"></div>
+
+    <div id="notice">
+      <h3>注意事項：</h3>
+      <ul>
+        <li>恒常の場合、毎日交換所で10個交換するとします。</li>
+        <li>得ラッシュを購入する場合は、キャラのかけら5個＋星4かけら1個の計6個とします。</li>
+        <li>チャレバトの変わる周期は1週間と仮定します。</li>
+        <li>ログイン報酬や配布でもらえるかけらは含まれていないので、表示されたものより早く目標数に達成することがあります。</li>
+      </ul>
+    </div>
+
+    <div class="form-group">
+      <button id="showHistoryButton">履歴を表示</button>
+    </div>
   </div>
 
-  <div class="form-group">
-    <label for="startDate">開始日：</label>
-    <input type="date" id="startDate">
-  </div>
-
-  <div class="form-group">
-    <label for="targetShards">目標かけら数：</label>
-    <input type="number" id="targetShards" min="1">
-  </div>
-
-  <div class="form-group">
-    <label for="characterType">キャラクターの種類：</label>
-    <select id="characterType">
-      <option value="ultra">超フェス</option>
-      <option value="limited">フェス限</option>
-      <option value="regular">恒常</option>
-    </select>
-  </div>
-
-  <div class="form-group" id="limitedOptions" style="display:none;">
-    <label for="purchaseRush">得ラッシュ30を購入しますか？</label>
-    <select id="purchaseRush">
-      <option value="yes">はい</option>
-      <option value="no">いいえ</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="specialTraining">特訓をしますか？</label>
-    <select id="specialTraining">
-      <option value="yes">はい</option>
-      <option value="no">いいえ</option>
-    </select>
-  </div>
-
-  <!-- 特訓関連のオプションは2つに分けています -->
-  <div class="form-group" id="trainingOptions" style="display:none;">
-    <label for="allianceCheer">同盟エールが使えますか？</label>
-    <select id="allianceCheer">
-      <option value="yes">はい</option>
-      <option value="no">いいえ</option>
-    </select>
-  </div>
-
-  <div class="form-group" id="trainingPaid" style="display:none;">
-    <label for="paidTraining">特訓に課金しますか？</label>
-    <select id="paidTraining">
-      <option value="yes">はい</option>
-      <option value="no">いいえ</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="leagueRewards">リーグ報酬のかけらを使いますか？</label>
-    <select id="leagueRewards">
-      <option value="yes">はい</option>
-      <option value="no">いいえ</option>
-    </select>
-  </div>
-
-  <div class="form-group" id="leagueOptions" style="display:none;">
-    <label for="leagueRank">シーズン最終日のランク：</label>
-    <select id="leagueRank">
-      <option value="SS">SS</option>
-      <option value="S+">S+</option>
-      <option value="S">S</option>
-      <option value="S-">S-</option>
-      <option value="A+">A+</option>
-      <option value="A">A</option>
-      <option value="A-">A-</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="challengeBattle">チャレバトでもらえるかけらを使いますか？</label>
-    <select id="challengeBattle">
-      <option value="yes">はい</option>
-      <option value="no">いいえ</option>
-    </select>
-  </div>
-
-  <div class="form-group" id="challengeOptions" style="display:none;">
-    <label for="paidChallenge">チャレバトに課金しますか？</label>
-    <select id="paidChallenge">
-      <option value="yes">はい</option>
-      <option value="no">いいえ</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <button onclick="calculateDate()">計算する</button>
-  </div>
-
-  <div id="result"></div>
-
-  <div id="notice">
-    <h3>注意事項：</h3>
-    <ul>
-      <li>恒常の場合、毎日交換所で10個交換するとします。</li>
-      <li>得ラッシュを購入する場合は、キャラのかけら5個＋星4かけら1個の計6個とします。</li>
-      <li>チャレバトの変わる周期は1週間と仮定します。</li>
-      <li>ログイン報酬や配布でもらえるかけらは含まれていないので、表示されたものより早く目標数に達成することがあります。</li>
-    </ul>
-  </div>
-
-  <div id="historyContainer">
+  <!-- 履歴表示画面 -->
+  <div id="historyScreen" style="display: none;">
     <h3>計算履歴</h3>
+    <div class="form-group">
+      <button id="backToCalculator">戻る</button>
+    </div>
     <ul id="historyList"></ul>
   </div>
 
@@ -230,7 +237,7 @@
     document.getElementById('leagueRewards').addEventListener('change', showHideOptions);
     document.getElementById('challengeBattle').addEventListener('change', showHideOptions);
 
-    // 履歴表示処理
+    // 履歴表示処理（計算日時は表示せず、目標達成予定日のみを表示）
     function updateHistoryUI() {
       const historyList = document.getElementById('historyList');
       historyList.innerHTML = '';
@@ -240,7 +247,7 @@
         const li = document.createElement('li');
         li.setAttribute('data-index', i);
         const nameDisplay = entry.characterName ? `<strong>${entry.characterName}</strong>：` : '';
-        li.innerHTML = `${nameDisplay}目標達成予定日 <em>${entry.targetDate}</em> （計算日時：${new Date(entry.calculatedDate).toLocaleString('ja-JP')}）`;
+        li.innerHTML = `${nameDisplay}目標達成予定日 <em>${entry.targetDate}</em>`;
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.title = 'この履歴を削除';
@@ -253,7 +260,7 @@
       }
     }
 
-    // 履歴の項目削除
+    // 履歴項目の削除
     function deleteHistoryItem(index) {
       let history = JSON.parse(localStorage.getItem('calculationHistory')) || [];
       history.splice(index, 1);
@@ -325,7 +332,7 @@
       while (currentShards < targetShards) {
         currentShards += dailyShards;
         totalDays++;
-        // リーグ報酬は1日と16日に加算
+        // リーグ報酬の加算（1日・16日に追加）
         if (leagueRewards === 'yes') {
           const currentDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
           if (currentDate.getDate() === 1 || currentDate.getDate() === 16) {
@@ -348,10 +355,21 @@
       updateHistoryUI();
     }
 
+    // 画面切替：履歴画面を表示
+    document.getElementById('showHistoryButton').addEventListener('click', function() {
+      document.getElementById('calculatorScreen').style.display = 'none';
+      document.getElementById('historyScreen').style.display = 'block';
+      updateHistoryUI();
+    });
+    // 画面切替：計算フォーム画面に戻る
+    document.getElementById('backToCalculator').addEventListener('click', function() {
+      document.getElementById('historyScreen').style.display = 'none';
+      document.getElementById('calculatorScreen').style.display = 'block';
+    });
+
     // 初期設定
     document.getElementById('startDate').valueAsDate = new Date();
     showHideOptions();
-    updateHistoryUI();
   </script>
 </body>
 </html>
