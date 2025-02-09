@@ -65,6 +65,22 @@
         #history li {
             padding: 5px;
             border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .delete-btn {
+            width: 20px;
+            height: 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 50%;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f;
         }
         @media (max-width: 600px) {
             h1 {
@@ -275,21 +291,4 @@
                 }
             }
 
-            const targetDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
-
-            document.getElementById('result').innerText = `目標達成予定日: ${targetDate.toLocaleDateString('ja-JP')}`;
-
-            // 履歴に追加
-            const historyList = document.getElementById('historyList');
-            const historyItem = document.createElement('li');
-            historyItem.textContent = `${characterName} (目標かけら数: ${targetShards}): ${targetDate.toLocaleDateString('ja-JP')}`;
-            historyList.appendChild(historyItem);
-        }
-
-        // 今日の日付をデフォルトで設定
-        document.getElementById('startDate').valueAsDate = new Date();
-        // 初期表示時にオプションを表示
-        showHideOptions();
-    </script>
-</body>
-</html>
+            const targetDate =
