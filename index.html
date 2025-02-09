@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="バウンティラッシュかけら計算サイト">
-    <meta name="keywords" content="バウンティラッシュ, かけら計算, ゲーム, 計算ツール">
-    <meta name="author" content="ユーザー名">
     <title>バウンティラッシュかけら計算</title>
     <style>
         body {
@@ -45,25 +42,15 @@
             padding: 15px;
             border-radius: 4px;
         }
-        #history {
-            margin-top: 20px;
-        }
-        .history-item {
-            background-color: #e6f2ff;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            color: #333;
-        }
-        .error {
-            color: red;
-            font-weight: bold;
-        }
         #notice {
             background-color: #e6f2ff;
             padding: 10px;
             border-radius: 4px;
             margin-top: 20px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
         }
         @media (max-width: 600px) {
             h1 {
@@ -76,7 +63,6 @@
 <body>
     <h1>バウンティラッシュかけら計算</h1>
     
-    <!-- 入力フォーム -->
     <label for="startDate">開始日：</label>
     <input type="date" id="startDate"><br>
 
@@ -151,16 +137,9 @@
         </select><br>
     </div>
 
-    <label for="characterName">キャラクター名：</label>
-    <input type="text" id="characterName"><br>
-
     <button onclick="calculateDate()">計算する</button>
 
     <div id="result"></div>
-
-    <!-- 計算履歴の表示 -->
-    <button onclick="toggleHistory()">履歴を見る</button>
-    <div id="history" style="display:none;"></div>
 
     <div id="notice">
         <h3>注意事項：</h3>
@@ -173,31 +152,25 @@
     </div>
 
     <script>
-        // 計算履歴を保存するための配列
-        let history = JSON.parse(localStorage.getItem('history')) || [];
-
-        function toggleHistory() {
-            const historyContainer = document.getElementById('history');
-            historyContainer.innerHTML = ''; // 履歴をクリア
-            history.forEach(item => {
-                const historyItem = document.createElement('div');
-                historyItem.classList.add('history-item');
-                historyItem.innerHTML = `
-                    <strong>キャラ名:</strong> ${item.name}<br>
-                    <strong>開始日:</strong> ${item.startDate}<br>
-                    <strong>目標かけら数:</strong> ${item.targetShards}<br>
-                    <strong>結果日:</strong> ${item.targetDate}<br>
-                    <strong>条件:</strong> ${JSON.stringify(item.conditions)}<br>
-                `;
-                historyContainer.appendChild(historyItem);
-            });
-            historyContainer.style.display = historyContainer.style.display === 'none' ? 'block' : 'none';
+        function showHideOptions() {
+            document.getElementById('limitedOptions').style.display = 
+                document.getElementById('characterType').value === 'limited' ? 'block' : 'none';
+            document.getElementById('trainingOptions').style.display = 
+                document.getElementById('specialTraining').value === 'yes' ? 'block' : 'none';
+            document.getElementById('leagueOptions').style.display = 
+                document.getElementById('leagueRewards').value === 'yes' ? 'block' : 'none';
+            document.getElementById('challengeOptions').style.display = 
+                document.getElementById('challengeBattle').value === 'yes' ? 'block' : 'none';
         }
+
+        document.getElementById('characterType').addEventListener('change', showHideOptions);
+        document.getElementById('specialTraining').addEventListener('change', showHideOptions);
+        document.getElementById('leagueRewards').addEventListener('change', showHideOptions);
+        document.getElementById('challengeBattle').addEventListener('change', showHideOptions);
 
         function calculateDate() {
             const startDate = new Date(document.getElementById('startDate').value);
             const targetShardsInput = document.getElementById('targetShards').value;
-            const characterName = document.getElementById('characterName').value;
             const characterType = document.getElementById('characterType').value;
             const purchaseRush = document.getElementById('purchaseRush').value;
             const specialTraining = document.getElementById('specialTraining').value;
@@ -280,31 +253,12 @@
             const targetDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
 
             document.getElementById('result').innerText = `目標達成予定日: ${targetDate.toLocaleDateString('ja-JP')}`;
-
-            // 履歴に保存
-            const conditions = {
-                startDate: startDate,
-                characterType: characterType,
-                purchaseRush: purchaseRush,
-                specialTraining: specialTraining,
-                allianceCheer: allianceCheer,
-                paidTraining: paidTraining,
-                leagueRewards: leagueRewards,
-                leagueRank: leagueRank,
-                challengeBattle: challengeBattle,
-                paidChallenge: paidChallenge
-            };
-            const historyItem = {
-                name: characterName || "名前未入力",
-                startDate: startDate.toLocaleDateString('ja-JP'),
-                targetShards: targetShards,
-                targetDate: targetDate.toLocaleDateString('ja-JP'),
-                conditions: conditions
-            };
-
-            history.push(historyItem);
-            localStorage.setItem('history', JSON.stringify(history));
         }
 
         // 今日の日付をデフォルトで設定
-        document.getElementById('startDate').value
+        document.getElementById('startDate').valueAsDate = new Date();
+        // 初期表示時にオプションを表示
+        showHideOptions();
+    </script>
+</body>
+</html>
